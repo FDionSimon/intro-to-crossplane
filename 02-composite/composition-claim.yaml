@@ -1,0 +1,9 @@
+apiVersion: workshop.example.com/v1alpha1
+kind: Application
+metadata:
+  name: workshop-app
+  namespace: composite
+spec:
+  parameters:
+    image: bahqiplor/cinq-gitops-workshop
+    port: 5000

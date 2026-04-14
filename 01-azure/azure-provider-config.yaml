@@ -1,0 +1,12 @@
+apiVersion: azure.m.upbound.io/v1beta1
+kind: ProviderConfig
+metadata:
+  name: azure-provider-config
+  namespace: azure
+spec:
+  credentials:
+    source: Secret
+    secretRef:
+      namespace: azure
+      name: azure-secret
+      key: creds

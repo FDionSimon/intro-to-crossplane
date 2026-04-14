@@ -1,0 +1,75 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: xapplications.workshop.example.com
+spec:
+  compositeTypeRef:
+    apiVersion: workshop.example.com/v1alpha1
+    kind: XApplication
+  mode: Pipeline
+  pipeline:
+    - step: create-resources
+      functionRef:
+        name: function-patch-and-transform
+      input:
+        apiVersion: pt.fn.crossplane.io/v1beta1
+        kind: Resources
+        resources:
+          - name: pod
+            base:
+              apiVersion: kubernetes.crossplane.io/v1alpha2
+              kind: Object
+              spec:
+                providerConfigRef:
+                  name: kubernetes-provider-config
+                forProvider:
+                  manifest:
+                    apiVersion: v1
+                    kind: Pod
+                    metadata:
+                      namespace: composite
+                    spec:
+                      containers:
+                        - name: app
+                          image: nginx
+                          ports:
+                            - containerPort: 80
+            patches:
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.parameters.image
+                toFieldPath: spec.forProvider.manifest.spec.containers[0].image
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.parameters.port
+                toFieldPath: spec.forProvider.manifest.spec.containers[0].ports[0].containerPort
+              - type: FromCompositeFieldPath
+                fromFieldPath: metadata.name
+                toFieldPath: spec.forProvider.manifest.metadata.name
+
+          - name: service
+            base:
+              apiVersion: kubernetes.crossplane.io/v1alpha2
+              kind: Object
+              spec:
+                providerConfigRef:
+                  name: kubernetes-provider-config
+                forProvider:
+                  manifest:
+                    apiVersion: v1
+                    kind: Service
+                    metadata:
+                      namespace: composite
+                    spec:
+                      ports:
+                        - port: 80
+                          targetPort: 80
+                      type: ClusterIP
+            patches:
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.parameters.port
+                toFieldPath: spec.forProvider.manifest.spec.ports[0].port
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.parameters.port
+                toFieldPath: spec.forProvider.manifest.spec.ports[0].targetPort
+              - type: FromCompositeFieldPath
+                fromFieldPath: metadata.name
+                toFieldPath: spec.forProvider.manifest.metadata.name

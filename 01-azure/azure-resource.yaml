@@ -1,0 +1,33 @@
+apiVersion: network.azure.m.upbound.io/v1beta1
+kind: VirtualNetwork
+metadata:
+  name: crossplane-virtual-network
+  namespace: azure
+  labels:
+    testing.upbound.io/example-name: virtual-network  
+spec:
+  providerConfigRef:
+    name: azure-provider-config
+    kind: ProviderConfig
+  forProvider:
+    addressSpace:
+      - 10.0.0.0/16
+    location: "West Europe"
+    resourceGroupName: <yourRG>
+---
+apiVersion: network.azure.m.upbound.io/v1beta1
+kind: Subnet
+metadata:
+  name: crossplane-subnet
+  namespace: azure
+spec:
+  providerConfigRef:
+    name: azure-provider-config
+    kind: ProviderConfig
+  forProvider:
+    addressPrefixes:
+      - 10.0.1.0/24
+    resourceGroupName: <yourRG>
+    virtualNetworkNameSelector:
+      matchLabels:
+        testing.upbound.io/example-name: virtual-network
