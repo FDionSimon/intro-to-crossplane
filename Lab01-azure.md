@@ -34,4 +34,5 @@
     kubectl apply -f ./01-azure/azure-resource.yaml -n azure
     kubectl get virtualnetworks -n azure
     kubectl get subnets -n azure
+    # Check the azure portal for the resources
 
