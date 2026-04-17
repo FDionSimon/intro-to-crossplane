@@ -28,6 +28,8 @@ spec:
                     kind: Pod
                     metadata:
                       namespace: composite
+                      label:
+                        app: foo
                     spec:
                       containers:
                         - name: app
@@ -63,6 +65,8 @@ spec:
                         - port: 80
                           targetPort: 80
                       type: ClusterIP
+                      selector:
+                        app: foo
             patches:
               - type: FromCompositeFieldPath
                 fromFieldPath: spec.parameters.port
